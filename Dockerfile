@@ -1,18 +1,15 @@
-# Start with Ubuntu 16.04 (LTS), and build badssl.com up from there
-FROM ubuntu:16.04
-MAINTAINER April King <april@pokeinthe.io>
+# Start with Ubuntu 24.04 (LTS), and build badssl.com up from there
+FROM ubuntu:24.04
+MAINTAINER Chris Thompson <cthomp@chromium.org>
 EXPOSE 80 443
-RUN apt-get update && apt-get install -y apt-transport-https
-RUN apt-get install -y software-properties-common
-RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     libffi-dev \
     make \
     nginx \
-    ruby2.4 \
-    ruby2.4-dev
+    ruby \
+    ruby-dev
 RUN gem update --system
 RUN gem install jekyll
 

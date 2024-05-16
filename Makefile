@@ -25,9 +25,11 @@ deploy: certs-prod jekyll-prod upload nginx
 jekyll-test:
 	DOMAIN=${TEST_DOMAIN} jekyll build
 
+# TODO(cthomp): Have this command also comment out the local-only includes line
 .PHONY: jekyll-prod
 jekyll-prod:
 	DOMAIN=${PROD_DOMAIN} jekyll build
+	sed -i 's/^.*domains-local-only.*$/# [removed for production]/' _site/nginx.conf
 
 ################ Certs ################
 

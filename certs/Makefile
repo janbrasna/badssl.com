@@ -90,20 +90,15 @@ $(O)/gen/crt/ca-intermediate.crt: src/conf/ca-intermediate.conf $(O)/gen/csr/ca-
 	./tool sign $@ $(D) $(SIGN_CA_DEFAULTS) $^
 
 ################################
-$(O)/gen/key/ca-sha1-intermediate.key:
-	./tool gen-key $@ $(D) 4096
-$(O)/gen/csr/ca-sha1-intermediate.csr: src/conf/ca-intermediate.conf $(O)/gen/key/ca-sha1-intermediate.key
-	./tool gen-csr $@ $(D) $^
-$(O)/gen/crt/ca-sha1-intermediate.crt: src/conf/ca-intermediate.conf $(O)/gen/csr/ca-sha1-intermediate.csr $(O)/gen/key/ca-root.key $(O)/gen/crt/ca-root.crt
-	./tool sign $@ $(D) 3650 sha1 req_v3_ca $^
-
-################################
-$(O)/gen/key/leaf-main.key: $(O)/gen/key/leaf-$(MAIN_CERT_TYPE).key
-	cp $< $@
-$(O)/gen/csr/wildcard-main.csr: $(O)/gen/csr/wildcard-$(MAIN_CERT_TYPE).csr
-	cp $< $@
-$(O)/gen/crt/wildcard-main.crt: $(O)/gen/crt/wildcard-$(MAIN_CERT_TYPE).crt
-	cp $< $@
+$(O)/gen/key/leaf-main.key:
+	./tool gen-key $@ $(D) 2048
+$(O)/gen/csr/wildcard-main.csr: src/conf/wildcard.conf $(O)/gen/key/leaf-main.key
+       ./tool gen-csr $@ $(D) $^
+$(O)/gen/crt/wildcard-main.crt: src/conf/wildcard.conf $(O)/gen/csr/wildcard-main.csr $(O)/gen/key/ca-intermediate.key $(O)/gen/crt/ca-intermediate.crt
+       ./tool sign $@ $(D) $(SIGN_LEAF_DEFAULTS) $^
+CHAINS_PROD += $(O)/gen/chain/wildcard-main.pem
+$(O)/gen/chain/wildcard-main.pem: $(O)/gen/crt/wildcard-main.crt $(O)/gen/crt/ca-intermediate.crt
+       ./tool chain $@ $(D) $^
 
 ################################
 $(O)/gen/csr/fallback.csr: src/conf/fallback.conf $(O)/gen/key/leaf-main.key
@@ -487,12 +482,6 @@ $(O)/gen/chain/subdomain-known-interception.pem: $(O)/gen/crt/subdomain-known-in
 
 
 ################################
-$(O)/gen/dhparam/dh480.pem:
-	./tool dhparam $@ $(D) 480
-$(O)/gen/dhparam/dh512.pem:
-	./tool dhparam $@ $(D) 512
-$(O)/gen/dhparam/dh1024.pem:
-	./tool dhparam $@ $(D) 1024
 $(O)/gen/dhparam/dh2048.pem:
 	./tool dhparam $@ $(D) 2048
 $(O)/gen/dhparam/dh-composite.pem: src/dhparam/dh-composite.pem
@@ -508,4 +497,4 @@ chains-prod: $(CHAINS_PROD)
 chains-local: chains-prod $(CHAINS_LOCAL_ONLY)
 
 .PHONY: dhparams
-dhparams: $(O)/gen/dhparam/dh480.pem $(O)/gen/dhparam/dh512.pem $(O)/gen/dhparam/dh1024.pem $(O)/gen/dhparam/dh2048.pem $(O)/gen/dhparam/dh-composite.pem $(O)/gen/dhparam/dh-small-subgroup.pem
+dhparams: $(O)/gen/dhparam/dh2048.pem $(O)/gen/dhparam/dh-composite.pem $(O)/gen/dhparam/dh-small-subgroup.pem

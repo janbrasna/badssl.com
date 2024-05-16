@@ -7,12 +7,12 @@ Visit [`badssl.com`](https://badssl.com/) for a list of test subdomains, includi
 - [`self-signed.badssl.com`](https://self-signed.badssl.com)
 - [`expired.badssl.com`](https://expired.badssl.com)
 - [`mixed.badssl.com`](https://mixed.badssl.com)
-- [`rc4.badssl.com`](https://rc4.badssl.com)
+- [`cbc.badssl.com`](https://cbc.badssl.com)
 - [`hsts.badssl.com`](https://hsts.badssl.com)
 
 ## Server Setup
 
-Stock Ubuntu VM, DNS A records for `badssl.com.` and `*.badssl.com.` pointing to the VM.
+Stock Ubuntu VM (currently 24.04 LTS), DNS A records for `badssl.com.` and `*.badssl.com.` pointing to the VM.
 
 ### Testing and development
 
